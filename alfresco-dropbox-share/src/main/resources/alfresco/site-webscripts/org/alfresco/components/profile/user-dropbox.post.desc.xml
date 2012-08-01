@@ -1,0 +1,6 @@
+<webscript>
+  <shortname>User Dropbox Account Update</shortname>
+  <description>User Dropbox Update POST component</description>
+  <format default="json" />
+  <url>/components/profile/user-dropbox/{action}</url>
+</webscript>

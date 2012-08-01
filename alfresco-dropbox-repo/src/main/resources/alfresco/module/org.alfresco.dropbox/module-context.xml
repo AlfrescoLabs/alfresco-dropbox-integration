@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    
+    <!-- Load the Model -->
+    <bean id="dropboxModel.dictionaryBootstrap" parent="dictionaryModelBootstrap" depends-on="dictionaryBootstrap">
+        <property name="models">
+            <list>
+                <value>alfresco/module/org.alfresco.dropbox/dropbox-model.xml</value>
+            </list>
+        </property>
+    </bean>
+ 
+    <!-- Dropbox Connection Factory -->
+	
+	<bean id="dropboxConnectionFactory" class="org.springframework.social.dropbox.connect.DropboxConnectionFactory">
+        <constructor-arg value="pui4gpsuwdf8kw4"/>
+        <constructor-arg value="0z7w3ztllldstl1"/>
+        <constructor-arg value="true"/>
+    </bean>
+ 
+ <!-- Dropbox Service -->
+    
+    <bean id="dropboxService" class="org.alfresco.dropbox.service.DropboxService">
+        <property name="personService">
+            <ref bean="personService"/>
+        </property>
+        <property name="nodeService">
+            <ref bean="nodeService"/>
+        </property>
+        <property name="permissionService">
+            <ref bean="permissionService"/>
+        </property>
+        <property name="contentService">
+            <ref bean="contentService"/>
+        </property>
+        <property name="metadataEncryptor">
+            <ref bean="metadataEncryptor"/>
+        </property>
+        <property name="sysAdminParams">
+            <ref bean="sysAdminParams"/>
+        </property>
+		<property name="authorityService">
+			<ref bean="authorityService"/>
+		</property>
+		<property name="siteService">
+			<ref bean="siteService"/>
+		</property>
+		<property name="behaviourFilter">
+			<ref bean="policyBehaviourFilter"/>
+		</property>
+        <property name="connectionFactory">
+            <ref bean="dropboxConnectionFactory"/>
+        </property>
+    </bean>
+	
+ <!-- Property Decorator -->
+  <bean id="syncedToDropbox" parent="baseDecorator" class="org.alfresco.dropbox.repo.jscript.app.SyncedToDropbox">
+   <property name="dropboxService">
+   		<ref bean="dropboxService"/>
+   </property>
+   <property name="propertyNames">
+      <set>
+         <value>db:isSyncedToDropbox</value>
+      </set>
+   </property>
+  </bean>
+	
+ <!-- Dropbox Model Behaviour --> 
+ 
+    <bean id="extension.dropbox.modelBehaviours" class="org.alfresco.dropbox.service.policy.DropboxAspect" init-method="init">
+        <property name="policyComponent">
+            <ref bean="policyComponent"/>
+        </property>
+        <property name="nodeService">
+            <ref bean="NodeService"/>
+        </property>
+		<property name="actionService">
+			<ref bean="actionService"/>
+		</property>
+		<property name="dropboxService">
+			<ref bean="dropboxService"/>
+		</property>
+    </bean>
+	
+	
+	<!-- Dropbox Actions -->
+	<bean id="dropboxUpdateAction" class ="org.alfresco.dropbox.service.action.DropboxUpdateAction" parent="action-executer">
+		<property name="dropboxService">
+			<ref bean="dropboxService"/>
+		</property>
+		<property name="lockService">
+			<ref bean="lockService"/>
+		</property>
+		<property name="nodeService">
+			<ref bean="nodeService"/>
+		</property>
+		<property name="fileFolderService">
+			<ref bean="fileFolderService"/>
+		</property>
+	</bean>
+	
+	<bean id="dropboxDeleteAction" class ="org.alfresco.dropbox.service.action.DropboxDeleteAction" parent="action-executer">
+		<property name="dropboxService">
+			<ref bean="dropboxService"/>
+		</property>
+	</bean>
+	
+	<bean id="dropboxMoveAction" class ="org.alfresco.dropbox.service.action.DropboxMoveAction" parent="action-executer">
+		<property name="dropboxService">
+			<ref bean="dropboxService"/>
+		</property>
+		<property name="nodeService">
+			<ref bean="nodeService"/>
+		</property>
+	</bean>
+	
+	<!-- Dropbox Poller -->
+	
+	<bean id="dropboxPollerImpl" class="org.alfresco.dropbox.service.polling.DropboxPollerImpl">
+        <property name="searchService">
+            <ref bean="searchService"/>
+        </property>
+        <property name="nodeService">
+            <ref bean="nodeService"/>
+        </property>
+        <property name="fileFolderService">
+            <ref bean="fileFolderService"/>
+        </property>
+		<property name="transactionService">
+            <ref bean="transactionService"/>
+        </property>
+        <property name="dropboxService">
+            <ref bean="dropboxService"/>
+        </property>
+    </bean>
+    
+    <bean id="dropboxPollingJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass">
+            <value>org.alfresco.dropbox.service.polling.DropboxPollingJob</value>
+        </property>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="dropboxPoller">
+                    <ref bean="dropboxPollerImpl"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+	<bean id="dropboxPollingTrigger" class="org.alfresco.util.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="dropboxPollingJobDetail"/>
+        </property>
+        <property name="scheduler">
+            <ref bean="schedulerFactory"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 0/2 * * * ?</value>
+        </property>
+    </bean>
+	
+	<!-- Dropbox Web Scripts -->
+    
+    <bean id="webscript.org.alfresco.dropbox.webscripts.PostNode.post" class="org.alfresco.dropbox.webscripts.PostNode" parent="webscript">
+        <property name="nodeService">
+            <ref bean="NodeService"/>
+        </property>
+        <property name="dropboxService">
+            <ref bean="dropboxService"/>
+        </property>
+        <property name="fileFolderService">
+            <ref bean="FileFolderService"/>
+        </property>
+        <property name="siteService">
+            <ref bean="siteService"/>
+        </property>
+    </bean>
+    
+    <bean id="webscript.org.alfresco.dropbox.webscripts.RemoveNode.post" class="org.alfresco.dropbox.webscripts.RemoveNode" parent="webscript">
+        <property name="nodeService">
+            <ref bean="NodeService"/>
+        </property>
+        <property name="dropboxService">
+            <ref bean="dropboxService"/>
+        </property>
+        <property name="fileFolderService">
+            <ref bean="FileFolderService"/>
+        </property>
+    </bean>
+    
+    <bean id="webscript.org.alfresco.dropbox.webscripts.GetNode.get" class="org.alfresco.dropbox.webscripts.GetNode" parent="webscript">
+        <property name="nodeService">
+            <ref bean="NodeService"/>
+        </property>
+        <property name="dropboxService">
+            <ref bean="dropboxService"/>
+        </property>
+        <property name="fileFolderService">
+            <ref bean="FileFolderService"/>
+        </property>
+		<property name="behaviourFilter">
+			<ref bean="policyBehaviourFilter"/>
+		</property>
+		<property name="versionService">
+			<ref bean="versionServie"/>
+		</property>
+    </bean>
+    
+    <bean id="webscript.org.alfresco.dropbox.webscripts.DropboxUser.get" class="org.alfresco.dropbox.webscripts.DropboxUser" parent="webscript">
+        <property name="personService">
+            <ref bean="personService"/>
+        </property>
+        <property name="nodeService">
+            <ref bean="nodeService"/>
+        </property>
+        <property name="dropboxService">
+            <ref bean="dropboxService"/>
+        </property>
+    </bean>
+    
+    <bean id="webscript.org.alfresco.dropbox.webscripts.urlDropboxAuth.get" class="org.alfresco.dropbox.webscripts.UrlDropboxAuth" parent="webscript">
+        <property name="dropboxService">
+            <ref bean="dropboxService"/>
+        </property>
+    </bean>
+    
+    <bean id="webscript.org.alfresco.dropbox.webscripts.completeDropboxAuth.get" class="org.alfresco.dropbox.webscripts.CompleteDropboxAuth" parent="webscript">
+        <property name="dropboxService">
+            <ref bean="dropboxService"/>
+        </property>
+    </bean>
+	
+	<bean id="webscript.org.alfresco.dropbox.webscripts.popupCompleteDropboxAuth.get" class="org.alfresco.dropbox.webscripts.PopUpCompleteDropboxAuth" parent="webscript">
+        <property name="dropboxService">
+            <ref bean="dropboxService"/>
+        </property>
+    </bean>
+    
+    <bean id="webscript.org.alfresco.dropbox.webscripts.DelinkDropboxUser.post" class="org.alfresco.dropbox.webscripts.DelinkDropboxUser" parent="webscript">
+        <property name="personService">
+            <ref bean="personService"/>
+        </property>
+        <property name="nodeService">
+            <ref bean="nodeService"/>
+        </property>
+    </bean>
+    
+</beans>

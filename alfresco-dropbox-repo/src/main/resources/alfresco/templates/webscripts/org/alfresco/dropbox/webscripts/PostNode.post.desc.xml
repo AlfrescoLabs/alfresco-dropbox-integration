@@ -1,0 +1,10 @@
+<webscript>
+	<shortname>Send Node to Dropbox</shortname>
+	<description>Send a Node or Folder and its content to Dropbox</description>
+	<url>/dropbox/node</url>
+	<lifecycle>draft</lifecycle>
+	<authentication>user</authentication>
+	<format default="json" />
+	<transaction>requiresnew</transaction>
+	<family>dropbox</family>
+</webscript>

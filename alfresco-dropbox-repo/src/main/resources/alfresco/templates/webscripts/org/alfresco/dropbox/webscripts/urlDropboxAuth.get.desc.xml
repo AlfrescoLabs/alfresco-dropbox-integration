@@ -1,0 +1,10 @@
+<webscript>
+	<shortname>Build Dropbox Auth URL</shortname>
+	<description>Build Dropbox Auth URL</description>
+	<url>/dropbox/account/authurl?callback={callback}</url>
+	<lifecycle>internal</lifecycle>
+	<authentication>user</authentication>
+	<format default="json" />
+	<transaction>requiresnew</transaction>
+	<family>dropbox</family>
+</webscript>

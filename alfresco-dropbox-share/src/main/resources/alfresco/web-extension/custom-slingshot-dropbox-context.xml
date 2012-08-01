@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+
+<beans>
+
+   <bean id="dropbox.custom.resources" class="org.springframework.extensions.surf.util.ResourceBundleBootstrapComponent">
+      <property name="resourceBundles">
+         <list>
+            <value>alfresco.messages.dropbox</value>
+         </list>
+      </property>
+   </bean>
+   
+   <bean id="evaluator.doclib.indicator.dropbox" parent="evaluator.doclib.metadata.value">
+      <property name="accessor" value="node.properties.db:isSyncedToDropbox.userIsSyncedToDropbox"/>
+	  <property name="comparator">
+         <bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+            <property name="value" value="true" />
+         </bean>
+      </property>
+   </bean>
+   
+   <bean id="evaluator.doclib.indicator.dropboxbusy" parent="evaluator.doclib.metadata.hasAspect">
+      <property name="aspects">
+         <list>
+            <value>db:syncinprogress</value>
+         </list>
+      </property>
+   </bean>
+
+
+</beans>
