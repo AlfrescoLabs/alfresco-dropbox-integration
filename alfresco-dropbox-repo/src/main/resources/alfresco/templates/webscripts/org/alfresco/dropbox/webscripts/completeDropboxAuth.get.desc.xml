@@ -1,0 +1,10 @@
+<webscript>
+	<shortname>Complete Dropbox Account Authentication</shortname>
+	<description>Complete Dropbox Account Authentication</description>
+	<url>/dropbox/account/complete/workflow?verifier={verifier}</url>
+	<lifecycle>internal</lifecycle>
+	<authentication>user</authentication>
+	<format default="json" />
+	<transaction>requiresnew</transaction>
+	<family>dropbox</family>
+</webscript>

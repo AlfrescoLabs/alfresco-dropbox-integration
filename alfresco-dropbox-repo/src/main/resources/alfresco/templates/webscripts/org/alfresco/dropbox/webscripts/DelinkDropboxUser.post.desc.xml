@@ -1,0 +1,10 @@
+<webscript>
+	<shortname>Delink Dropbox Account </shortname>
+	<description>Delink Dropbox Account </description>
+	<url>/dropbox/account/delink/{user}</url>
+	<lifecycle>internal</lifecycle>
+	<authentication>user</authentication>
+	<format default="json" />
+	<transaction>requiresnew</transaction>
+	<family>dropbox</family>
+</webscript>

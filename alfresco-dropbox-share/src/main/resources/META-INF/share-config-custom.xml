@@ -1,0 +1,71 @@
+<alfresco-config>
+	<config evaluator="string-compare" condition="DocLibCustom">
+	   <dependencies>
+	      <js src="/dropbox/components/documentlibrary/actions-min.js" />
+	   </dependencies>
+	</config>
+	
+	<config evaluator="string-compare" condition="DocumentLibrary">
+		<indicators>
+			<indicator id="dropbox" index="250" icon="dropbox-16.png">
+				<evaluator>evaluator.doclib.indicator.dropbox</evaluator>
+			</indicator>
+			<indicator id="dropbox-sync" index="249" icon="dropboxstatus-busy-16.png">
+				<evaluator>evaluator.doclib.indicator.dropboxbusy</evaluator>
+			</indicator>
+		</indicators>
+	</config>
+	
+	<config evaluator="string-compare" condition="DocLibActions">
+		<actions>
+			<action id="dropbox-send-action-link" type="javascript" icon="dropbox" label="dropbox.actions.document.sendto">
+				<param name="function">onDropboxActionSendTo</param>
+				<evaluator negate="true">evaluator.doclib.indicator.dropbox</evaluator>
+				<permissions>
+					<permission allow="true">Write</permission>
+				</permissions>
+			</action>
+			<action id="dropbox-from-action-link" type="javascript" icon="dropbox" label="dropbox.actions.document.getfrom">
+				<param name="function">onDropboxActionGetFrom</param>
+				<evaluator>evaluator.doclib.indicator.dropbox</evaluator>
+				<permissions>
+					<permission allow="true">Write</permission>
+				</permissions>
+			</action>
+			<action id="dropbox-remove-action-link" type="javascript" icon="dropbox" label="dropbox.actions.document.remove">
+				<param name="function">onDropboxActionRemove</param>
+				<evaluator>evaluator.doclib.indicator.dropbox</evaluator>
+				<permissions>
+					<permission allow="true">Write</permission>
+				</permissions>
+			</action>
+		</actions>
+		
+		<actionGroups>
+			<actionGroup id="document-browse">
+				<action index="250" id="dropbox-send-action-link" />
+				<action index="250" id="dropbox-from-action-link" />
+				<action index="250" id="dropbox-remove-action-link" />
+			</actionGroup>
+			
+			<actionGroup id="document-details">
+				<action index="250" id="dropbox-send-action-link" />
+				<action index="250" id="dropbox-from-action-link" />
+				<action index="250" id="dropbox-remove-action-link" />
+			</actionGroup>
+			
+			<actionGroup id="folder-browse">
+				<action index="250" id="dropbox-send-action-link" />
+				<action index="250" id="dropbox-from-action-link" />
+				<action index="250" id="dropbox-remove-action-link" />
+			</actionGroup>
+			
+			<actionGroup id="folder-details">
+				<action index="250" id="dropbox-send-action-link" />
+				<action index="250" id="dropbox-from-action-link" />
+				<action index="250" id="dropbox-remove-action-link" />
+			</actionGroup>
+		</actionGroups>	
+	</config>
+	
+</alfresco-config>

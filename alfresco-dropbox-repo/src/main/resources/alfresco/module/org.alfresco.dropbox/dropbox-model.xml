@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model name="db:dropbox" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+    
+    <description>Dropbox</description>
+    <author>Jared Ottley</author>
+    <version>1.0</version>
+    
+    
+    <imports>
+        <import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d"/>
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm"/>
+    </imports>
+    
+    <namespaces>
+        <namespace uri="http://www.alfresco.org/model/dropbox/1.0" prefix="db"/>
+    </namespaces>
+    
+    
+	<types>
+		<type name="db:status">
+			<title>Dropbox Site Details</title>
+			<parent>cm:cmobject</parent>
+			<properties>
+				<property name="db:syncing">
+					<type>d:boolean</type>
+				</property>
+				<property name="db:lastsync">
+					<type>d:datetime</type>
+				</property>
+			</properties>
+		</type>
+		<type name="db:users">
+			<title>Content Synced to</title>
+			<parent>cm:cmobject</parent>
+			<associations>
+               <child-association name="db:usermetadata">
+			   <source>
+                  <mandatory>false</mandatory>
+                  <many>false</many>
+               </source>
+               <target>
+                  <class>db:metadata</class>
+                  <mandatory>true</mandatory>
+                  <many>true</many>
+               </target>
+			   <duplicate>false</duplicate>
+               </child-association>
+            </associations>
+		</type>
+		<type name="db:metadata">
+			<title>Dropbox Content Metadata</title>
+			<parent>cm:cmobject</parent>
+			<properties>
+                <property name="db:hash">
+                    <type>d:text</type>
+					<index enabled="false"/>
+                </property>
+				<property name="db:rev">
+					<type>d:text</type>
+					<index enabled="false"/>
+				</property>
+			</properties>
+		</type>
+	</types>
+				
+				
+	
+	<aspects>
+        <aspect name="db:dropbox">
+            <title>dropbox</title>
+			<properties>
+				<property name="db:isSyncedToDropbox">
+					<type>d:boolean</type>
+					<default>false</default>
+					<index enabled="false"/>
+				</property>
+			</properties>
+ 			<associations>
+               <child-association name="db:dropbox">
+			   <source>
+                  <mandatory>true</mandatory>
+                  <many>false</many>
+               </source>
+               <target>
+                  <class>db:users</class>
+                  <mandatory>true</mandatory>
+                  <many>false</many>
+               </target>
+			   <duplicate>false</duplicate>
+            </child-association>
+         </associations>
+        </aspect>		
+		
+		<aspect name="db:oauth">
+			<title>dropbox_oauth</title>
+			<properties>
+				<property name="db:access_token">
+					<type>d:encrypted</type>
+					<index enabled="false"/>
+				</property>
+				<property name="db:token_secret">
+					<type>d:encrypted</type>
+					<index enabled="false"/>
+				</property>
+				<property name="db:oauth_complete">
+					<type>d:boolean</type>
+					<index enabled="false"/>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="db:syncable">
+			<title>dropbox enabled site</title>
+			<associations>
+               <child-association name="db:syncdetails">
+			   <source>
+                  <mandatory>true</mandatory>
+                  <many>false</many>
+               </source>
+               <target>
+                  <class>db:status</class>
+                  <mandatory>true</mandatory>
+                  <many>true</many>
+               </target>
+			   <duplicate>false</duplicate>
+            </child-association>
+         </associations>
+		</aspect>
+		
+		<aspect name="db:syncinprogress">
+			<title>Dropbox Sync in Progress</title>
+		</aspect>
+		
+    </aspects>
+</model>
