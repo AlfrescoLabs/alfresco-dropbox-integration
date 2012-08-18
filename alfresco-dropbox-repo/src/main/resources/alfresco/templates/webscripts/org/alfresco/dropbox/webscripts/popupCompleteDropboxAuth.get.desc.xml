@@ -1,0 +1,10 @@
+<webscript>
+	<shortname>Complete Dropbox Account Authentication (PopUp)</shortname>
+	<description>Complete Dropbox Account Authentication started via popup</description>
+	<url>/dropbox/account/complete/popup/workflow?oauth_token={oauth_token}&amp;uid={uid}</url>
+	<lifecycle>internal</lifecycle>
+	<authentication>user</authentication>
+	<format default="html" />
+	<transaction>requiresnew</transaction>
+	<family>dropbox</family>
+</webscript>

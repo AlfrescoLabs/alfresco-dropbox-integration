@@ -1,0 +1,10 @@
+<webscript>
+	<shortname>Dropbox Account Metadata</shortname>
+	<description>Get Dropbox Account Metadata</description>
+	<url>/dropbox/account</url>
+	<lifecycle>internal</lifecycle>
+	<authentication>user</authentication>
+	<format default="json" />
+	<transaction>requiresnew</transaction>
+	<family>dropbox</family>
+</webscript>

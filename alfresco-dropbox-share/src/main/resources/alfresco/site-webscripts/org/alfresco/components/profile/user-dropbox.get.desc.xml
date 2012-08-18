@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>User Dropbox</shortname>
+  <description>User Dropbox settings</description>
+  <url>/components/profile/user-dropbox</url>
+</webscript>

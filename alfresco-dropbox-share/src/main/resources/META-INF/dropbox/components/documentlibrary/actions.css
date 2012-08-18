@@ -1,0 +1,9 @@
+.doclist .onDropboxActionSendTo .onDropboxActionGetFrom .onDropboxActionRemove a.action-link 
+{
+    background-image: url("dropbox-16.png");
+}
+
+.toolbar .onDropboxActionSendTo .onDropboxActionGetFrom .onDropboxActionRemove
+{
+    background-image: url("dropbox-16.png");
+}

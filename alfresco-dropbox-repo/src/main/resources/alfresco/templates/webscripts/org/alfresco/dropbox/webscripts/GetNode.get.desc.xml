@@ -1,0 +1,10 @@
+<webscript>
+	<shortname>Get Node from Dropbox</shortname>
+	<description>Get a Node or Folder and its content from Dropbox</description>
+	<url>/dropbox/node</url>
+	<lifecycle>draft</lifecycle>
+	<authentication>user</authentication>
+	<format default="json" />
+	<transaction>requiresnew</transaction>
+	<family>dropbox</family>
+</webscript>

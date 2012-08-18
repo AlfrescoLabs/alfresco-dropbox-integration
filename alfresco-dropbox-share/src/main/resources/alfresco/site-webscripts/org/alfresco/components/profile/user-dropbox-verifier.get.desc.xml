@@ -1,0 +1,8 @@
+<webscript>
+	<shortname>Dropbox Account Verifier</shortname>
+	<description>Verify Dropbox Account</description>
+	<url>/dropbox/account/verifier?oauth_token={oauth_token}&amp;uid={uid}</url>
+	<authentication>user</authentication>
+	<format default="html" />
+	<transaction>requiresnew</transaction>
+</webscript>

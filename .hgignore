@@ -1,0 +1,5 @@
+
+syntax: regexp
+^alfresco-dropbox-share/target$
+syntax: regexp
+^alfresco-dropbox-repo/target$

@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<page>
+   <title>Link Alfresco User Account to Dropbox Account</title>
+   <title-id>page.userDropbox.title</title-id>
+   <description>Link Dropbox Account section on Profile page for a User</description>
+   <description-id>page.userDropbox.description</description-id>
+   <template-instance>user-dropbox</template-instance>
+   <authentication>user</authentication>
+</page>

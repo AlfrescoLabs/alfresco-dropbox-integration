@@ -1,0 +1,10 @@
+<webscript>
+	<shortname>Remove Node from Dropbox</shortname>
+	<description>Remove a Node or Folder and its content from Dropbox</description>
+	<url>/dropbox/removenode</url>
+	<lifecycle>draft</lifecycle>
+	<authentication>user</authentication>
+	<format default="json" />
+	<transaction>requiresnew</transaction>
+	<family>dropbox</family>
+</webscript>
