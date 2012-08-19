@@ -553,7 +553,7 @@ public class DropboxPollerImpl
 
                             if (childAssoc.size() == 1)
                             {
-                                syncing = new Boolean(nodeService.getProperty(childAssoc.get(0).getChildRef(), DropboxConstants.Model.PROP_SYNCING).toString());
+                                syncing = Boolean.valueOf(nodeService.getProperty(childAssoc.get(0).getChildRef(), DropboxConstants.Model.PROP_SYNCING).toString());
                             }
                         }
 
