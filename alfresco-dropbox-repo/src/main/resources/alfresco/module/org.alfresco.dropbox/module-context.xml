@@ -203,7 +203,7 @@
 	</bean>
 	
 	<!-- Dropbox Poller -->
-	
+	<!-- 
 	<bean id="dropboxPollerImpl" class="org.alfresco.dropbox.service.polling.DropboxPollerImpl">
         <property name="searchService">
             <ref bean="searchService"/>
@@ -246,7 +246,7 @@
             <value>0 0/2 * * * ?</value>
         </property>
     </bean>
-	
+	-->
 	<!-- Dropbox Web Scripts -->
     
     <bean id="webscript.org.alfresco.dropbox.webscripts.PostNode.post" class="org.alfresco.dropbox.webscripts.PostNode" parent="webscript">
