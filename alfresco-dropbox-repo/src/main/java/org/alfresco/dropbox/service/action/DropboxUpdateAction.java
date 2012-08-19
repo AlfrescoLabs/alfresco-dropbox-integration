@@ -1,28 +1,26 @@
 /*
  * Copyright 2011-2012 Alfresco Software Limited.
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  * 
  * This file is part of an unsupported extension to Alfresco.
- * 
  */
 
 package org.alfresco.dropbox.service.action;
 
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.dropbox.DropboxConstants;
 import org.alfresco.dropbox.exceptions.FileExistsException;
@@ -48,9 +46,10 @@ import org.springframework.extensions.webscripts.Status;
 import org.springframework.social.dropbox.api.Metadata;
 import org.springframework.web.client.HttpClientErrorException;
 
+
 /**
  * 
- *
+ * 
  * @author Jared Ottley
  */
 public class DropboxUpdateAction
@@ -199,7 +198,7 @@ public class DropboxUpdateAction
             }
             catch (HttpClientErrorException hcee)
             {
-                if (hcee.getStatusCode().equals(Status.STATUS_FORBIDDEN))
+                if (hcee.getStatusCode().value() == Status.STATUS_FORBIDDEN)
                 {
                     metadata = dropboxService.getMetadata(nodeRef);
                 }
@@ -303,8 +302,7 @@ public class DropboxUpdateAction
 
 
     /**
-     * Filter out users on the node being passed that are on the parent that
-     * don't need to be updated.
+     * Filter out users on the node being passed that are on the parent that don't need to be updated.
      * 
      * @param nodeRef Node being added to the folder
      * @return synced users that need to be updated
@@ -320,11 +318,14 @@ public class DropboxUpdateAction
         {
             if (childMap.size() > 0)
             {
-                for (String key : parentMap.keySet())
+                Set<Map.Entry<String, NodeRef>> parentMapSet = parentMap.entrySet();
+                Iterator<Map.Entry<String, NodeRef>> i = parentMapSet.iterator();
+                while (i.hasNext())
                 {
-                    if (!childMap.containsKey(key))
+                    Map.Entry<String, NodeRef> entry = i.next();
+                    if (!childMap.containsKey(entry.getKey()))
                     {
-                        filteredMap.put(key, parentMap.get(key));
+                        filteredMap.put(entry.getKey(), entry.getValue());
                     }
                 }
             }

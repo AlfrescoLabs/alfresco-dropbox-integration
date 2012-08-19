@@ -77,6 +77,36 @@
          <version>1.8.3-alfresco-patched</version>
          <scope>provided</scope>
       </dependency>
+      
+      <!-- Begin Sonar/Fingbug -->
+<dependency>
+  <groupId>net.sf.ehcache</groupId>
+  <artifactId>ehcache</artifactId>
+  <version>1.4.1-patched</version>
+  <classifier>patched</classifier>
+  <scope>provided</scope>
+</dependency>
+      <dependency>
+  <groupId>org.hibernate</groupId>
+  <artifactId>hibernate</artifactId>
+  <version>3.2.6-alfresco-patched</version>
+  <scope>provided</scope>
+</dependency>
+<dependency>
+  <groupId>javax.transaction</groupId>
+  <artifactId>jta</artifactId>
+  <version>1.0.1b</version>
+  <scope>provided</scope>
+</dependency>
+<dependency>
+  <groupId>org.mybatis</groupId>
+  <artifactId>mybatis</artifactId>
+  <version>3.0.4</version>
+  <classifier>patched</classifier>
+  <scope>provided</scope>
+</dependency>
+      <!-- End Sonar/Findbug -->
+      
    </dependencies>
 
    <build>

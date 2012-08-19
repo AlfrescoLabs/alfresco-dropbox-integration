@@ -1,20 +1,16 @@
 /*
  * Copyright 2011-2012 Alfresco Software Limited.
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  * 
  * This file is part of an unsupported extension to Alfresco.
- * 
  */
 
 package org.alfresco.dropbox.service.polling;
@@ -23,6 +19,7 @@ package org.alfresco.dropbox.service.polling;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 
@@ -48,27 +45,28 @@ import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.social.dropbox.api.Metadata;
 
+
 /**
  * 
- *
+ * 
  * @author Jared Ottley
  */
 public class DropboxPollerImpl
     implements DropboxPoller
 {
-    private final static Log   log                          = LogFactory.getLog(DropboxPollerImpl.class);
+    private final static Log     log                          = LogFactory.getLog(DropboxPollerImpl.class);
 
-    private SearchService      searchService;
-    private NodeService        nodeService;
-    private FileFolderService  fileFolderService;
-    private TransactionService transactionService;
-    private DropboxService     dropboxService;
+    private SearchService        searchService;
+    private NodeService          nodeService;
+    private FileFolderService    fileFolderService;
+    private TransactionService   transactionService;
+    private DropboxService       dropboxService;
 
-    private static String      CMIS_DROPBOX_SITES_QUERY     = "SELECT * FROM st:site AS S JOIN db:syncable AS O ON S.cmis:objectId = O.cmis:objectId";
-    private static String      CMIS_DROPBOX_DOCUMENTS_QUERY = "SELECT D.* FROM cmis:document AS D JOIN db:dropbox AS O ON D.cmis:objectId = O.cmis:objectId";
-    private static String      CMIS_DROPBOX_FOLDERS_QUERY   = "SELECT F.* FROM cmis:folder AS F JOIN db:dropbox AS O ON F.cmis:objectId = O.cmis:objectId";
+    private static final String  CMIS_DROPBOX_SITES_QUERY     = "SELECT * FROM st:site AS S JOIN db:syncable AS O ON S.cmis:objectId = O.cmis:objectId";
+    private static final String  CMIS_DROPBOX_DOCUMENTS_QUERY = "SELECT D.* FROM cmis:document AS D JOIN db:dropbox AS O ON D.cmis:objectId = O.cmis:objectId";
+    private static final String  CMIS_DROPBOX_FOLDERS_QUERY   = "SELECT F.* FROM cmis:folder AS F JOIN db:dropbox AS O ON F.cmis:objectId = O.cmis:objectId";
 
-    private NodeRef            MISSING_NODE                 = new NodeRef("missing://missing/missing");
+    private static final NodeRef MISSING_NODE                 = new NodeRef("missing://missing/missing");
 
 
     public void setSearchService(SearchService searchService)
@@ -136,13 +134,19 @@ public class DropboxPollerImpl
                                         folders = getFolders(site);
                                         documents = getDocuments(site);
 
+
                                         if (documents != null)
                                         {
-                                            for (NodeRef document : documents)
+                                            // If the document is the child of a synced folder...we want to work on the folder as a
+                                            // full collection and not the document as an independent element
+                                            Iterator<NodeRef> i = documents.iterator();
+
+                                            while (i.hasNext())
                                             {
+                                                NodeRef document = i.next();
                                                 if (folders.contains(nodeService.getPrimaryParent(document).getParentRef()))
                                                 {
-                                                    documents.remove(document);
+                                                    i.remove();
                                                 }
                                             }
                                             if (documents.size() > 0)
@@ -165,8 +169,7 @@ public class DropboxPollerImpl
                                                 {
                                                     Metadata metadata = dropboxService.getMetadata(folder);
 
-                                                    // Get the list of the
-                                                    // content returned.
+                                                    // Get the list of the content returned.
                                                     List<Metadata> list = metadata.getContents();
 
                                                     for (Metadata child : list)
@@ -201,6 +204,9 @@ public class DropboxPollerImpl
                                     {
                                         syncOff(site);
                                         log.debug("End processing " + nodeService.getProperty(site, ContentModel.PROP_NAME));
+
+                                        documents = null;
+                                        folders = null;
                                     }
                                 }
 
@@ -238,9 +244,8 @@ public class DropboxPollerImpl
                 }
                 catch (LuceneQueryParserException lqpe)
                 {
-                    // This is primarily to handle the case where the dropbox
-                    // model has not been added to solr yet.
-                    // Incidentally it catches other failures too ;)
+                    // This is primarily to handle the case where the dropbox model has not been added to solr yet. Incidentally it
+                    // catches other failures too ;)
                     log.info("Unable to perform site query: " + lqpe.getMessage());
                 }
 
@@ -250,13 +255,21 @@ public class DropboxPollerImpl
         }, AuthenticationUtil.getAdminUserName());
 
         // TODO Hopefully one day this will go away --Open Bug??
-        if (resultSet.length() > 0)
+
+        try
         {
-            if (!resultSet.getNodeRef(0).equals(MISSING_NODE))
+            if (resultSet.length() > 0)
             {
-                sites = resultSet.getNodeRefs();
-                log.debug("Sites with Dropbox content: " + sites);
+                if (!resultSet.getNodeRef(0).equals(MISSING_NODE))
+                {
+                    sites = resultSet.getNodeRefs();
+                    log.debug("Sites with Dropbox content: " + sites);
+                }
             }
+        }
+        finally
+        {
+            resultSet.close();
         }
 
         return sites;
@@ -283,14 +296,22 @@ public class DropboxPollerImpl
             }
 
         }, AuthenticationUtil.getAdminUserName());
-        // TODO Hopefully one day this will go away --Open Bug??
-        if (resultSet.length() > 0)
+
+        try
         {
-            if (!resultSet.getNodeRef(0).equals(MISSING_NODE))
+            // TODO Hopefully one day this will go away --Open Bug??
+            if (resultSet.length() > 0)
             {
-                documents = resultSet.getNodeRefs();
-                log.debug("Documents synced to Dropbox: " + documents);
+                if (!resultSet.getNodeRef(0).equals(MISSING_NODE))
+                {
+                    documents = resultSet.getNodeRefs();
+                    log.debug("Documents synced to Dropbox: " + documents);
+                }
             }
+        }
+        finally
+        {
+            resultSet.close();
         }
 
         return documents;
@@ -318,14 +339,21 @@ public class DropboxPollerImpl
 
         }, AuthenticationUtil.getAdminUserName());
 
-        // TODO Hopefully one day this will go away --Open Bug??
-        if (resultSet.length() > 0)
+        try
         {
-            if (!resultSet.getNodeRef(0).equals(MISSING_NODE))
+            // TODO Hopefully one day this will go away --Open Bug??
+            if (resultSet.length() > 0)
             {
-                folders = resultSet.getNodeRefs();
-                log.debug("Folders synced to Dropbox: " + folders);
+                if (!resultSet.getNodeRef(0).equals(MISSING_NODE))
+                {
+                    folders = resultSet.getNodeRefs();
+                    log.debug("Folders synced to Dropbox: " + folders);
+                }
             }
+        }
+        finally
+        {
+            resultSet.close();
         }
 
         return folders;
@@ -360,8 +388,7 @@ public class DropboxPollerImpl
                             {
                                 Metadata metadata = dropboxService.getMetadata(nodeRef);
 
-                                // Get the list of the content
-                                // returned.
+                                // Get the list of the content returned.
                                 List<Metadata> list = metadata.getContents();
 
                                 for (Metadata child : list)
