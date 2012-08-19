@@ -48,8 +48,8 @@ public class DropboxMoveAction
     private DropboxService     dropboxService;
     private NodeService        nodeService;
 
-    public final static String DROPBOX_FROM_PATH = "dropbox-from-path";
-    public final static String DROPBOX_TO_PATH   = "dropbox-to-path";
+    public static final String DROPBOX_FROM_PATH = "dropbox-from-path";
+    public static final String DROPBOX_TO_PATH   = "dropbox-to-path";
 
 
     public void setDropboxService(DropboxService dropboxService)
