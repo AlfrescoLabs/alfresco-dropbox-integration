@@ -288,11 +288,11 @@ public class DropboxUpdateAction
     {
         boolean useParent = false;
 
-        try
+        if (action.getParameterValue(DROPBOX_USE_PARENT) != null)
         {
             useParent = Boolean.valueOf(action.getParameterValue(DROPBOX_USE_PARENT).toString());
         }
-        catch (NullPointerException npe)
+        else
         {
             useParent = false;
         }
