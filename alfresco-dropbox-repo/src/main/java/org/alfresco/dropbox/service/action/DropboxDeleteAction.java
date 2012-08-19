@@ -42,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
 public class DropboxDeleteAction
     extends ActionExecuterAbstractBase
 {
-    private final static Log   logger        = LogFactory.getLog(DropboxDeleteAction.class);
+    private static final Log   logger        = LogFactory.getLog(DropboxDeleteAction.class);
 
     DropboxService             dropboxService;
 

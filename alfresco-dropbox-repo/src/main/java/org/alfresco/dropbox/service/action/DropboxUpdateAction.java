@@ -55,14 +55,14 @@ import org.springframework.web.client.HttpClientErrorException;
 public class DropboxUpdateAction
     extends ActionExecuterAbstractBase
 {
-    private final static Log   logger             = LogFactory.getLog(DropboxUpdateAction.class);
+    private static final Log   logger             = LogFactory.getLog(DropboxUpdateAction.class);
 
     private DropboxService     dropboxService;
     private LockService        lockService;
     private NodeService        nodeService;
     private FileFolderService  fileFolderService;
 
-    public final static String DROPBOX_USE_PARENT = "dropbox-use-parent";
+    public static final String DROPBOX_USE_PARENT = "dropbox-use-parent";
 
 
     public void setDropboxService(DropboxService dropboxService)

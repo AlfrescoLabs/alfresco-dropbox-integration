@@ -47,7 +47,7 @@ import org.springframework.social.dropbox.api.DropboxUserProfile;
 public class DropboxUser
     extends DeclarativeWebScript
 {
-    private static Log          logger             = LogFactory.getLog(DropboxUser.class);
+    private static final Log          logger             = LogFactory.getLog(DropboxUser.class);
 
     private PersonService       personService;
     private NodeService         nodeService;
@@ -62,8 +62,8 @@ public class DropboxUser
     private static final String EMAIL              = "email";
 
     private static final String AUTH_URL           = "auth_url";
-    private final static String CALLBACK_WEBSCRIPT = "dropbox/account/complete/popup/workflow";
-    private final static String CALLBACK_PARAM     = "callback";
+    private static final String CALLBACK_WEBSCRIPT = "dropbox/account/complete/popup/workflow";
+    private static final String CALLBACK_PARAM     = "callback";
 
 
     public void setPersonService(PersonService personService)

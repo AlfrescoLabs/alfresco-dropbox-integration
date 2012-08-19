@@ -47,7 +47,7 @@ public class Node
 {
 
     // JSON object sent from share contains a single array of nodeRefs
-    private final static String JSON_KEY_NODE_REFS = "nodeRefs";
+    private static final String JSON_KEY_NODE_REFS = "nodeRefs";
 
     protected NodeService       nodeService;
     protected DropboxService    dropboxService;

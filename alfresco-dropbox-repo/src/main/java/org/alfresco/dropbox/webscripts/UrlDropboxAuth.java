@@ -39,9 +39,9 @@ public class UrlDropboxAuth
     extends DeclarativeWebScript
 {
 
-    private final static String CALLBACK_WEBSCRIPT = "/share/service/dropbox/account/verifier";
-    private final static String CALLBACK_PARAM     = "callback";
-    private final static String AUTHURL            = "authURL";
+    private static final String CALLBACK_WEBSCRIPT = "/share/service/dropbox/account/verifier";
+    private static final String CALLBACK_PARAM     = "callback";
+    private static final String AUTHURL            = "authURL";
 
     private DropboxService      dropboxService;
 

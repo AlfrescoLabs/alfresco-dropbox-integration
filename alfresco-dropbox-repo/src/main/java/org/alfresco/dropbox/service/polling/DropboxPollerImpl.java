@@ -54,7 +54,7 @@ import org.springframework.social.dropbox.api.Metadata;
 public class DropboxPollerImpl
     implements DropboxPoller
 {
-    private final static Log     log                          = LogFactory.getLog(DropboxPollerImpl.class);
+    private static final Log     log                          = LogFactory.getLog(DropboxPollerImpl.class);
 
     private SearchService        searchService;
     private NodeService          nodeService;

@@ -1,20 +1,16 @@
 /*
  * Copyright 2011-2012 Alfresco Software Limited.
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  * 
  * This file is part of an unsupported extension to Alfresco.
- * 
  */
 
 package org.alfresco.dropbox.service.policy;
@@ -51,25 +47,26 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+
 /**
  * 
- *
+ * 
  * @author Jared Ottley
  */
 public class DropboxAspect
     implements OnContentUpdatePolicy, OnCreateChildAssociationPolicy, BeforeDeleteNodePolicy, OnCopyNodePolicy, OnMoveNodePolicy
 {
 
-    private final static Log    log                   = LogFactory.getLog(DropboxAspect.class);
+    private static final Log    log                   = LogFactory.getLog(DropboxAspect.class);
 
     private PolicyComponent     policyComponent;
     private NodeService         nodeService;
     private ActionService       actionService;
     private DropboxService      dropboxService;
 
-    private final static String DROPBOX_UPDATE_ACTION = "dropboxUpdateAction";
-    private final static String DROPBOX_DELETE_ACTION = "dropboxDeleteAction";
-    private final static String DROPBOX_MOVE_ACTION   = "dropboxMoveAction";
+    private static final String DROPBOX_UPDATE_ACTION = "dropboxUpdateAction";
+    private static final String DROPBOX_DELETE_ACTION = "dropboxDeleteAction";
+    private static final String DROPBOX_MOVE_ACTION   = "dropboxMoveAction";
 
 
     public void setPolicyComponent(final PolicyComponent policyComponent)
@@ -160,9 +157,8 @@ public class DropboxAspect
 
     /*
      * (non-Javadoc)
-     * @see
-     * org.alfresco.repo.copy.CopyServicePolicies.OnCopyNodePolicy#getCopyCallback
-     * (org.alfresco.service.namespace.QName,
+     * 
+     * @see org.alfresco.repo.copy.CopyServicePolicies.OnCopyNodePolicy#getCopyCallback (org.alfresco.service.namespace.QName,
      * org.alfresco.repo.copy.CopyDetails)
      */
     public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails)

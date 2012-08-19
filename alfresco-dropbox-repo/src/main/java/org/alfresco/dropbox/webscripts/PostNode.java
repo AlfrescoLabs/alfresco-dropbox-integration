@@ -55,11 +55,11 @@ public class PostNode
     extends Node
 {
 
-    private static Log          logger        = LogFactory.getLog(PostNode.class);
+    private static final Log          logger        = LogFactory.getLog(PostNode.class);
 
     private SiteService         siteService;
 
-    private final static String FOLDER_EXISTS = "403 Forbidden";
+    private static final String FOLDER_EXISTS = "403 Forbidden";
 
 
     public void setSiteService(SiteService siteService)

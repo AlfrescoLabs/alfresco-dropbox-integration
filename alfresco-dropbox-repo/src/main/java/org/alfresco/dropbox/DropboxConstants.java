@@ -41,7 +41,7 @@ public final class DropboxConstants
     public static final String DOCUMENTLIBRARY = "/documentLibrary";
 
 
-    public final static class Model
+    public static final class Model
     {
 
         /**
