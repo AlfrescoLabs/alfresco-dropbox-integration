@@ -29,7 +29,7 @@ import org.alfresco.service.namespace.QName;
  * All Constants need for Dropbox: Application type, REST APIs
  * (GET, POST, PUT) and Content Model
  */
-public final class DropboxConstants
+public interface DropboxConstants
 {
 
     /**
@@ -41,7 +41,7 @@ public final class DropboxConstants
     public static final String DOCUMENTLIBRARY = "/documentLibrary";
 
 
-    public static final class Model
+    public static interface Model
     {
 
         /**
