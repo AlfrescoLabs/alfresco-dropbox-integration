@@ -1,20 +1,16 @@
 /*
  * Copyright 2011-2012 Alfresco Software Limited.
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  * 
  * This file is part of an unsupported extension to Alfresco.
- * 
  */
 
 package org.alfresco.dropbox.service;
@@ -38,9 +34,10 @@ import org.alfresco.dropbox.exceptions.FileNotFoundException;
 import org.alfresco.dropbox.exceptions.FileSizeException;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.admin.SysAdminParams;
-import org.alfresco.repo.node.encryption.MetadataEncryptor;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.oauth1.OAuth1CredentialsStoreService;
+import org.alfresco.service.cmr.remotecredentials.OAuth1CredentialsInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -70,30 +67,31 @@ import org.springframework.social.oauth1.OAuthToken;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 
+
 /**
  * 
- *
+ * 
  * @author Jared Ottley
  */
 public class DropboxServiceImpl
     implements DropboxService
 {
 
-    private static Log               logger    = LogFactory.getLog(DropboxServiceImpl.class);
+    private static Log                    logger    = LogFactory.getLog(DropboxServiceImpl.class);
 
-    private PersonService            personService;
-    private NodeService              nodeService;
-    private PermissionService        permissionService;
-    private ContentService           contentService;
-    private MetadataEncryptor        encryptor;
-    private SysAdminParams           sysAdminParams;
-    private AuthorityService         authorityService;
-    private SiteService              siteService;
-    private BehaviourFilter          behaviourFilter;
+    private PersonService                 personService;
+    private NodeService                   nodeService;
+    private PermissionService             permissionService;
+    private ContentService                contentService;
+    private SysAdminParams                sysAdminParams;
+    private AuthorityService              authorityService;
+    private SiteService                   siteService;
+    private BehaviourFilter               behaviourFilter;
+    private OAuth1CredentialsStoreService oauth1CredentialsStoreService;
 
-    private DropboxConnectionFactory connectionFactory;
+    private DropboxConnectionFactory      connectionFactory;
 
-    private static final String      NOT_FOUND = "404 Not Found";
+    private static final String           NOT_FOUND = "404 Not Found";
 
 
     public void setPersonService(PersonService personService)
@@ -126,12 +124,6 @@ public class DropboxServiceImpl
     }
 
 
-    public void setMetadataEncryptor(MetadataEncryptor encryptor)
-    {
-        this.encryptor = encryptor;
-    }
-
-
     public void setAuthorityService(AuthorityService authorityService)
     {
         this.authorityService = authorityService;
@@ -156,20 +148,24 @@ public class DropboxServiceImpl
     }
 
 
+    public void setOauth1CredentialsStoreService(OAuth1CredentialsStoreService oauth1CredentialsStoreService)
+    {
+        this.oauth1CredentialsStoreService = oauth1CredentialsStoreService;
+    }
+
+
     // Dropbox Connection
 
     private Connection<Dropbox> getConnection()
         throws DropboxAuthenticationException
     {
         Connection<Dropbox> connection = null;
-        NodeRef person = personService.getPerson(AuthenticationUtil.getRunAsUser());
 
-        if (nodeService.hasAspect(person, DropboxConstants.Model.ASPECT_DROBOX_OAUTH))
+        OAuth1CredentialsInfo credentialsInfo = oauth1CredentialsStoreService.getPersonalOAuth1Credentials(DropboxConstants.REMOTE_SYSTEM);
+
+        if (credentialsInfo != null)
         {
-            Serializable value = (String)encryptor.decrypt(DropboxConstants.Model.PROP_ACCESS_TOKEN, nodeService.getProperty(person, DropboxConstants.Model.PROP_ACCESS_TOKEN));
-            Serializable secret = (String)encryptor.decrypt(DropboxConstants.Model.PROP_TOKEN_SECRET, nodeService.getProperty(person, DropboxConstants.Model.PROP_TOKEN_SECRET));
-
-            OAuthToken accessToken = new OAuthToken(value.toString(), secret.toString());
+            OAuthToken accessToken = new OAuthToken(credentialsInfo.getOAuthToken(), credentialsInfo.getOAuthSecret());
 
             try
             {
@@ -231,9 +227,9 @@ public class DropboxServiceImpl
 
                 OAuth1Operations operations = connectionFactory.getOAuthOperations();
 
-                OAuthToken requestToken = getTokenFromUser(person);
+                OAuth1CredentialsInfo credintialsInfo = getTokenFromUser();
 
-                OAuthToken accessToken = operations.exchangeForAccessToken(new AuthorizedRequestToken(requestToken, verifier), null);
+                OAuthToken accessToken = operations.exchangeForAccessToken(new AuthorizedRequestToken(new OAuthToken(credintialsInfo.getOAuthToken(), credintialsInfo.getOAuthSecret()), verifier), null);
 
                 persistTokens(accessToken, true);
 
@@ -247,42 +243,27 @@ public class DropboxServiceImpl
     }
 
 
-    private OAuthToken getTokenFromUser(NodeRef person)
+    private OAuth1CredentialsInfo getTokenFromUser()
     {
-        OAuthToken token = null;
-
-        if (nodeService.hasAspect(person, DropboxConstants.Model.ASPECT_DROBOX_OAUTH))
-        {
-            Serializable value = (String)encryptor.decrypt(DropboxConstants.Model.PROP_ACCESS_TOKEN, nodeService.getProperty(person, DropboxConstants.Model.PROP_ACCESS_TOKEN));
-            Serializable secret = (String)encryptor.decrypt(DropboxConstants.Model.PROP_TOKEN_SECRET, nodeService.getProperty(person, DropboxConstants.Model.PROP_TOKEN_SECRET));
-
-            token = new OAuthToken(value.toString(), secret.toString());
-        }
-
-        return token;
+        return oauth1CredentialsStoreService.getPersonalOAuth1Credentials(DropboxConstants.REMOTE_SYSTEM);
 
     }
 
 
     private void persistTokens(OAuthToken token, boolean complete)
     {
-        NodeRef person = personService.getPerson(AuthenticationUtil.getRunAsUser());
+        OAuth1CredentialsInfo credentialsInfo = oauth1CredentialsStoreService.getPersonalOAuth1Credentials(DropboxConstants.REMOTE_SYSTEM);
 
-        if (nodeService.hasAspect(person, DropboxConstants.Model.ASPECT_DROBOX_OAUTH))
-        {
-            nodeService.setProperty(person, DropboxConstants.Model.PROP_ACCESS_TOKEN, encryptor.encrypt(DropboxConstants.Model.PROP_ACCESS_TOKEN, token.getValue()));
-            nodeService.setProperty(person, DropboxConstants.Model.PROP_TOKEN_SECRET, encryptor.encrypt(DropboxConstants.Model.PROP_TOKEN_SECRET, token.getSecret()));
-        }
-        else
+        oauth1CredentialsStoreService.storePersonalOAuth1Credentials(DropboxConstants.REMOTE_SYSTEM, token.getValue(), token.getSecret());
+
+        if (credentialsInfo != null)
         {
             HashMap<QName, Serializable> properties = new HashMap<QName, Serializable>();
-            properties.put(DropboxConstants.Model.PROP_ACCESS_TOKEN, encryptor.encrypt(DropboxConstants.Model.PROP_ACCESS_TOKEN, token.getValue()));
-            properties.put(DropboxConstants.Model.PROP_TOKEN_SECRET, encryptor.encrypt(DropboxConstants.Model.PROP_TOKEN_SECRET, token.getSecret()));
             properties.put(DropboxConstants.Model.PROP_OAUTH_COMPLETE, complete);
 
+            NodeRef person = personService.getPerson(AuthenticationUtil.getRunAsUser());
             nodeService.addAspect(person, DropboxConstants.Model.ASPECT_DROBOX_OAUTH, properties);
         }
-
     }
 
 
@@ -632,8 +613,7 @@ public class DropboxServiceImpl
 
 
     /**
-     * All the user metadata for the synched users. User must be Repository
-     * Admin or Site Manager.
+     * All the user metadata for the synched users. User must be Repository Admin or Site Manager.
      * 
      * @param nodeRef
      * @return
@@ -703,8 +683,7 @@ public class DropboxServiceImpl
 
 
     /**
-     * Is the node synced to Dropbox for the user. Requires Admin or SiteManager
-     * role to run
+     * Is the node synced to Dropbox for the user. Requires Admin or SiteManager role to run
      * 
      * @param nodeRef
      * @param userAuthority
@@ -736,8 +715,8 @@ public class DropboxServiceImpl
 
 
     /**
-     * Total number of users who have the node synced to their Dropbox account.
-     * If -1 is returned then the total could not be determined.
+     * Total number of users who have the node synced to their Dropbox account. If -1 is returned then the total could not be
+     * determined.
      * 
      * @param nodeRef
      * @return

@@ -121,9 +121,6 @@
         <property name="contentService">
             <ref bean="contentService"/>
         </property>
-        <property name="metadataEncryptor">
-            <ref bean="metadataEncryptor"/>
-        </property>
         <property name="sysAdminParams">
             <ref bean="sysAdminParams"/>
         </property>
@@ -138,6 +135,9 @@
 		</property>
         <property name="connectionFactory">
             <ref bean="dropboxConnectionFactory"/>
+        </property>
+        <property name="oauth1CredentialsStoreService">
+        	<ref bean="oauth1CredentialsStoreService"/>
         </property>
     </bean>
 	

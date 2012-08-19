@@ -40,6 +40,7 @@ public interface DropboxConstants
     public static final String COMPANY_HOME    = "/Company Home";
     public static final String DOCUMENTLIBRARY = "/documentLibrary";
 
+    public static final String REMOTE_SYSTEM   = "dropbox";
 
     public static interface Model
     {
